@@ -7,6 +7,7 @@ import { Job } from "src/modules/jobs/entities/job.entity";
 @Entity()
 export class User extends BaseEntity {
 
+    // General info
     @Column({ name: 'full_name', type: 'varchar', length: 150, nullable: false })
     fullName: string;
 
@@ -37,9 +38,10 @@ export class User extends BaseEntity {
     @Column({ name: 'register_date', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     registerDate: Date;
 
+    
 
-    ///
-
+    
+    // Recruiter related info
     @Column({ name: 'company_name', type: 'varchar', length: 150, nullable: true })
     companyName: string;
 
@@ -54,6 +56,7 @@ export class User extends BaseEntity {
 
     @Column({ name: 'industry_type', type: 'varchar', length: 100, nullable: true })
     industryType: string;
+
 
     // Job seeker: One user → Many applications
     @OneToMany(() => Application, (application) => application.applicant)

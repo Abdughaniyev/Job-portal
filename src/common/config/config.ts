@@ -16,4 +16,11 @@ export const config: IConfig = {
     clientID: String(process.env.GOOGLE_CLIENT_ID) || '',
     clientSecret: String(process.env.GOOGLE_CLIENT_SECRET) || '',
     callbackURL: String(process.env.GOOGLE_CALLBACK_URL) || '',
+
+
+    smtpPort: Number(process.env.SMTP_PORT),
+    smtpHost: String(process.env.SMTP_HOST) || '',
+    smtpUser: String(process.env.SMTP_USER) || '',
+    smtpPassword: String(process.env.SMTP_PASSWORD) || '',
+    ipAddress:String(process.env.IP_ADDRESS)
 };

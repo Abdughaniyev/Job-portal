@@ -6,13 +6,28 @@ import { User } from './entities/user.entity';
 import { GoogleStrategy } from './google/google.strategy';
 import { AuthService } from './jwt/auth-service';
 import { JwtModule } from '@nestjs/jwt';
+import { MailModule } from 'src/modules/users/nodemailer/nodemailer.module';
+import { MailService } from 'src/modules/users/nodemailer/nodemailer.service';
+import { PasswordModule } from './forget-password/forget-password.module';
+
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    JwtModule
+    JwtModule,
+    MailModule,
+    PasswordModule
+
   ],
   controllers: [UsersController],
-  providers: [UsersService, GoogleStrategy, AuthService],
+  providers: [
+    UsersService,
+    GoogleStrategy,
+    AuthService,
+    MailService,
+    
+  ],
 })
 export class UsersModule { }
+
+

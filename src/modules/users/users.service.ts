@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
@@ -9,10 +9,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LoginUserDto } from './dto/login-user.dto';
 import * as  jwt from 'jsonwebtoken'
 import { RoleEnum } from 'src/common/enums/roleEnum';
+import { config } from 'src/common/config/config';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) { }
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    ) { }
+
 
   async signup(createUserDto: CreateUserDto) {
     try {
@@ -73,11 +79,23 @@ export class UsersService {
   }
 
 
-  async googleLogin(user: any) {
-    return {
-      message: 'Google login successful',
-      user,
-    };
+
+
+  async googleLogin(user: Record<string, any>) {
+    const existUser = await this.userRepository.findOne({ where: { email: user.email } })
+
+    let finalUser: User
+    if (!existUser) {
+      finalUser = await this.userRepository.save(user)
+    }
+    else {
+      finalUser = existUser;
+    }
+
+    const payload = { id: finalUser.id, email: finalUser.email, role: finalUser.role }
+    const accessToken = jwt.sign(payload, config.jwtAccessToken, { expiresIn: "15m" })
+
+    return new ResData('Log in successful!', 200, accessToken)
   }
 
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,29 +7,44 @@ import { JwtAuthGuard } from './jwt/auth-guard';
 import { RolesGuard } from './roles/roles.guard';
 import { Roles } from './roles/roles.decorator';
 import { GoogleAuthGuard } from './google/google-auth.guard';
+import { PasswordService } from './forget-password/forget-password.service';
+import { VerifyDto } from './forget-password/dto/verify-code.dto';
+
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService,
+    private readonly passwordService: PasswordService
+  ) { }
 
-  // Anyone can sign up
   @Post('sign-up')
   signup(@Body() createUserDto: CreateUserDto) {
     return this.usersService.signup(createUserDto);
   }
 
-  // Anyone can log in
   @Post('log-in')
-  login(@Body() createLoginUserDto: LoginUserDto) {
-    return this.usersService.login(createLoginUserDto);
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.usersService.login(loginUserDto);
   }
 
-  
+  // PASSWORD RESET FLOW
+
+  @Post('reset-password')
+  resetPassword(@Body() body: { email: string }) {
+    return this.passwordService.randomPassword(body.email);
+  }
+
+  @Post('verify-password')
+  verifyCode(@Body() verifyDto: VerifyDto) {
+    return this.passwordService.verifyCode(verifyDto.email, verifyDto.resetPassword);
+  }
+
+  // GOOGLE AUTH 
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   googleAuth() {
-    // Redirects to Google
+    // Handled by guard
   }
 
   @Get('google/redirect')
@@ -38,9 +53,8 @@ export class UsersController {
     return this.usersService.googleLogin(req.user);
   }
 
+  // ADMIN: GET ALL USERS
 
-
-  // Only admin can view all users
   @Get()
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -48,27 +62,30 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // Any authenticated user can view their own data
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
-  }
+  // ADMIN: UPDATE USER
 
-  // Only admin can update user details
-  @Roles('admin')
   @Patch(':id')
+  @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
-  // Only admin can delete a user
-  @Roles('admin')
+  // ADMIN: DELETE USER 
+
   @Delete(':id')
+  @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  //USER: GET OWN PROFILE 
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
   }
 }
 

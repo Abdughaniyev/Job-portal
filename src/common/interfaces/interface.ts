@@ -10,4 +10,9 @@ export interface IConfig {
     clientID: string;
     clientSecret: string;
     callbackURL: string;
+    smtpHost: string;
+    smtpPort: number;
+    smtpUser: string;
+    smtpPassword: string;
+    ipAddress: string;
 }

@@ -46,3 +46,8 @@ async function bootstrap() {
 }
 bootstrap();
 
+
+
+// 1. Reset password
+// 2. Cookie + refresh token. Refresh token should be saved in the cookie
+// 3. 
