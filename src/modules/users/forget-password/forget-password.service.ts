@@ -13,14 +13,14 @@ export class PasswordService {
     async randomPassword(email: string) {
         const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-        await this.cacheManager.set(`verify:${email}`, verifyCode);  
+        await this.cacheManager.set(`verify:${email}`, verifyCode);
         await this.mailService.sendMail(email, verifyCode);
+        return new ResData('6-digit verification code has been sent successfully!', 201)
 
-        return verifyCode;
     }
 
     async verifyCode(email: string, code: string) {
-        const storedCode = await this.cacheManager.get(`verify:${email}`);  
+        const storedCode = await this.cacheManager.get(`verify:${email}`);
 
         if (!storedCode) {
             throw new BadRequestException('Code expired or not found!');
@@ -30,7 +30,7 @@ export class PasswordService {
             throw new BadRequestException('Invalid code!');
         }
 
-        await this.cacheManager.del(`verify:${email}`); 
+        await this.cacheManager.del(`verify:${email}`);
 
         return new ResData('Code verified successfully!', 200);
     }
