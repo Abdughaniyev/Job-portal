@@ -1,6 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/general-update.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { ResData } from 'src/lib/resData';
@@ -17,7 +17,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    ) { }
+  ) { }
 
 
   async signup(createUserDto: CreateUserDto) {

@@ -26,15 +26,6 @@ export class CreateUserDto {
     @IsString()
     password: string;
 
-
-    @ApiProperty({
-        description: "User reset password",
-        example: "123456"
-    })
-    @MinLength(6)
-    @IsString()
-    resetPassword: string;
-
     @ApiProperty({
         description: "User role",
         enum: RoleEnum,

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/general-update.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtAuthGuard } from './jwt/auth-guard';
 import { RolesGuard } from './roles/roles.guard';
@@ -9,6 +9,7 @@ import { Roles } from './roles/roles.decorator';
 import { GoogleAuthGuard } from './google/google-auth.guard';
 import { PasswordService } from './forget-password/forget-password.service';
 import { VerifyDto } from './forget-password/dto/verify-code.dto';
+import { ResetPasswordDto } from './forget-password/dto/reset-password.dto';
 
 
 @Controller('users')
@@ -30,7 +31,7 @@ export class UsersController {
   // PASSWORD RESET FLOW
 
   @Post('reset-password')
-  resetPassword(@Body() body: { email: string }) {
+  resetPassword(@Body() body: ResetPasswordDto) {
     return this.passwordService.randomPassword(body.email);
   }
 
@@ -62,6 +63,15 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  //USER: GET OWN PROFILE 
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
+  }
+  
+
   // ADMIN: UPDATE USER
 
   @Patch(':id')
@@ -80,13 +90,7 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  //USER: GET OWN PROFILE 
-
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
-  }
+  
 }
 
 
