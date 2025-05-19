@@ -27,6 +27,8 @@ import { PasswordModule } from './forget-password/forget-password.module';
     MailService,
     
   ],
+
+  exports:[UsersService]
 })
 export class UsersModule { }
 

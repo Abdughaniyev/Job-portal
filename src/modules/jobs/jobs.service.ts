@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class JobsService {
-  constructor( @InjectRepository(Job)private readonly jobRepository: Repository<Job>) { }
+  constructor(@InjectRepository(Job) private readonly jobRepository: Repository<Job>) { }
 
   async create(createJobDto: CreateJobDto) {
     const repostLimitDays = Number(process.env.JOB_REPOST_DAYS_LIMIT) || 7;
@@ -86,5 +86,12 @@ export class JobsService {
     const removIt = await this.jobRepository.delete(id)
 
     return new ResData('Job has been deleted successfully!', 200, removIt)
+  }
+
+
+
+  async countJobs(): Promise<number> {
+    const countJobs = await this.jobRepository.count()
+    return countJobs;
   }
 }

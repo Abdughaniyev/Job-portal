@@ -9,7 +9,7 @@ import { config } from './common/config/config';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3001',
     credentials: true,
   });
 

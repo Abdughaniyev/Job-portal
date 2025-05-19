@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/general-update.dto';
 import { Repository } from 'typeorm';
@@ -10,7 +10,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import * as  jwt from 'jsonwebtoken'
 import { RoleEnum } from 'src/common/enums/roleEnum';
 import { config } from 'src/common/config/config';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+
 
 @Injectable()
 export class UsersService {
@@ -151,5 +151,11 @@ export class UsersService {
     }
     const removedUser = await this.userRepository.delete(id)
     return new ResData('User has been deleted successfully!', 200, removedUser)
+  }
+
+
+  async countUsers(): Promise<number> {
+    const countUsers = await this.userRepository.count()
+    return countUsers;
   }
 }

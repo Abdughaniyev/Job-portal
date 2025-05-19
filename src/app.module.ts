@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/users/jwt/jwt-modul';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-ioredis'
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
 
@@ -36,6 +37,7 @@ import * as redisStore from 'cache-manager-ioredis'
     JobsModule,
     ApplicationsModule,
     AuthModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

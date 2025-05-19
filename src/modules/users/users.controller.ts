@@ -29,7 +29,6 @@ export class UsersController {
   }
 
   // PASSWORD RESET FLOW
-
   @Post('reset-password')
   resetPassword(@Body() body: ResetPasswordDto) {
     return this.passwordService.randomPassword(body.email);
@@ -41,7 +40,6 @@ export class UsersController {
   }
 
   // GOOGLE AUTH 
-
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   googleAuth() {
@@ -55,7 +53,6 @@ export class UsersController {
   }
 
   // ADMIN: GET ALL USERS
-
   @Get()
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -64,7 +61,6 @@ export class UsersController {
   }
 
   //USER: GET OWN PROFILE 
-
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
@@ -82,7 +78,6 @@ export class UsersController {
   }
 
   // ADMIN: DELETE USER 
-
   @Delete(':id')
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)

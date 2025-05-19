@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ApplicationsService {
-  constructor( @InjectRepository(Application)private readonly appRepository: Repository<Application>) { }
+  constructor(@InjectRepository(Application) private readonly appRepository: Repository<Application>) { }
 
   async create(createApplicationDto: CreateApplicationDto) {
     const daysLimit = 7;
@@ -76,6 +76,12 @@ export class ApplicationsService {
     return new ResData('Application has been deleted successfully', 200, deletableCode)
 
 
+  }
+
+
+  async countApplication(): Promise<number> {
+    const countApplications = await this.appRepository.count()
+    return countApplications;
   }
 }
 
