@@ -158,4 +158,9 @@ export class UsersService {
     const countUsers = await this.userRepository.count()
     return countUsers;
   }
+
+
+  async saveResumePath(filename: string) {
+    return new ResData('Resume uploaded successfully!', 200, filename)
+  }
 }

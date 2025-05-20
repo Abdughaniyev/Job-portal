@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UseInterceptors, UploadedFile, } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/general-update.dto';
@@ -10,13 +10,45 @@ import { GoogleAuthGuard } from './google/google-auth.guard';
 import { PasswordService } from './forget-password/forget-password.service';
 import { VerifyDto } from './forget-password/dto/verify-code.dto';
 import { ResetPasswordDto } from './forget-password/dto/reset-password.dto';
-
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer'
+import { extname } from 'path';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService,
-    private readonly passwordService: PasswordService
+    private readonly passwordService: PasswordService,
+
   ) { }
+
+
+  @Roles('jobseeker')
+  @UseGuards(JwtAuthGuard)
+  @Post('file-upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/resumes',
+        filename: (req, file, cb) => {
+          const uniqueName = Date.now() + '-' + Math.floor(Math.random() * 1000000);
+          const fileExtension = extname(file.originalname);
+          cb(null, uniqueName + fileExtension);
+        }
+      }),
+      fileFilter: (req, file, cb) => {
+        const isPdf = file.mimetype === 'application/pdf';
+        cb(isPdf ? null : new Error('Only pdf files are allowed!'), isPdf);
+      },
+      limits: { fileSize: 5 * 1024 * 1024 }
+    })
+  )
+
+
+  async uploadResume(@UploadedFile() file: Express.Multer.File) {
+    const fileUrl = `http://localhost:3000/uploads/resumes/${file.filename}`
+    return this.usersService.saveResumePath(fileUrl);
+  }
+
+
 
   @Post('sign-up')
   signup(@Body() createUserDto: CreateUserDto) {
@@ -66,7 +98,7 @@ export class UsersController {
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
-  
+
 
   // ADMIN: UPDATE USER
 
@@ -85,7 +117,8 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  
+
+
 }
 
 

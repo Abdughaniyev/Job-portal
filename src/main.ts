@@ -5,7 +5,8 @@ import { AllExceptionFlter } from './lib/AllExceptionFilter';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { config } from './common/config/config';
- 
+import { join } from 'path';
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
@@ -15,8 +16,12 @@ async function bootstrap() {
 
   app.useBodyParser('json')
   const httpAdapterHost = app.get(HttpAdapterHost);
+  app.useStaticAssets(join(__dirname,".." ,'uploads'), {
+    prefix: '/uploads',
+  })
   app.useGlobalFilters(new AllExceptionFlter(httpAdapterHost));
   app.setGlobalPrefix('api/v1');
+
 
 
   app.useGlobalPipes(
@@ -47,7 +52,4 @@ async function bootstrap() {
 bootstrap();
 
 
-
-// 1. Reset password
-// 2. Cookie + refresh token. Refresh token should be saved in the cookie
-// 3. 
+ 

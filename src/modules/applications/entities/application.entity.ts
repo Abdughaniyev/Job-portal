@@ -23,14 +23,12 @@ export class Application extends BaseEntity {    // Ariza
     status: ApplicationStatusEnum;
 
 
-
-
     // All applications submitted to this job
     @ManyToOne(() => Job, (job) => job.applications)
     job: Job;
-        
+
     // The recruiter (User) who posted the job
     @ManyToOne(() => User, (user) => user.applications)
-    @JoinColumn({name:'applicant_id'})
+    @JoinColumn({ name: 'applicant_id' })
     applicant: User;
 }

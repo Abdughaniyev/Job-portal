@@ -39,6 +39,8 @@ export class User extends BaseEntity {
     registerDate: Date;
 
     
+   
+
 
     
     // Recruiter related info
