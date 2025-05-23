@@ -25,6 +25,10 @@ export class JobsService {
         jobType: createJobDto.jobType,
         salary: createJobDto.salary,
         recruiter: { id: createJobDto.recruiterId },
+        jobCategory: createJobDto.jobCategory,
+        companyName: createJobDto.companyName,
+        requirements: createJobDto.requirements,
+
         createdAt: MoreThan(repostLimitDate),
 
       },
@@ -34,10 +38,20 @@ export class JobsService {
     if (job) {
       throw new ConflictException(`You can repost this job repository after ${repostLimitDays} days`)
     }
-    const newJob = await this.jobRepository.create({
-      ...createJobDto,
-      recruiter: { id: createJobDto.recruiterId }
-    })
+    const newJob = this.jobRepository.create({
+      title: createJobDto.jobTitle,
+      description: createJobDto.jobDescription,
+      location: createJobDto.jobLocation,
+      jobType: createJobDto.jobType,
+      salary: createJobDto.salary,
+      recruiter: { id: createJobDto.recruiterId },
+      jobCategory: createJobDto.jobCategory,
+      companyName: createJobDto.companyName,
+      requirements: createJobDto.requirements,
+
+
+
+    });
 
     const savedJob = await this.jobRepository.save(newJob);
     return new ResData('Job has been created successfully!', 201, savedJob)

@@ -16,11 +16,13 @@ async function bootstrap() {
 
   app.useBodyParser('json')
   const httpAdapterHost = app.get(HttpAdapterHost);
-  app.useStaticAssets(join(__dirname,".." ,'uploads'), {
-    prefix: '/uploads',
+  app.setGlobalPrefix('api/v1');
+
+  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    prefix: '/uploads/',
   })
   app.useGlobalFilters(new AllExceptionFlter(httpAdapterHost));
-  app.setGlobalPrefix('api/v1');
+
 
 
 
@@ -52,4 +54,4 @@ async function bootstrap() {
 bootstrap();
 
 
- 
+// Search jobs and by keyword and filter them.

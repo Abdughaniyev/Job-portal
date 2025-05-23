@@ -1,11 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, IsUUID } from "class-validator";
+import { Type } from "class-transformer";
+import {  IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateApplicationDto {
     @ApiProperty({
         description: "ID of the job being applied to",
         example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
     })
+    @Type(() => String)
     @IsUUID()
     jobId: string;
 
@@ -13,15 +15,10 @@ export class CreateApplicationDto {
         description: "Applicant ID",
         example: "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
     })
+    @Type(() => String)
     @IsUUID()
     applicantId: string;
 
-
-    @ApiProperty({
-        description: "URL or path for resume",
-        example: 'resume+link&oq=resume+link&gs_lcrp=EgZjaHJvbWUyCQgA'
-    })
-    resume: string;
 
     @ApiProperty({
         description: "Optional cover letter message",

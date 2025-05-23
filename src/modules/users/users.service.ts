@@ -160,7 +160,4 @@ export class UsersService {
   }
 
 
-  async saveResumePath(filename: string) {
-    return new ResData('Resume uploaded successfully!', 200, filename)
-  }
 }

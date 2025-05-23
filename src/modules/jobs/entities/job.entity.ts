@@ -25,14 +25,11 @@ export class Job extends BaseEntity {
     @Column({ name: 'job_type', type: 'enum', enum: JobType, nullable: false })
     jobType: JobType;
 
-    @Column({ name: 'work_field', type: 'varchar', length: 150, nullable: false })
-    category: string;
+    @Column({ name: 'job_category', type: 'varchar', length: 150, nullable: false })
+    jobCategory: string;
 
     @Column({ name: 'company_name', type: 'varchar', length: 150, nullable: false })
     companyName: string;
-
-    @Column({ name: 'is_job_open', type: 'boolean', nullable: false })
-    isActive: boolean;
 
     @Column({ name: 'posted_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     postedAt: Date;

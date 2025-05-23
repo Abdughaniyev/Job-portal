@@ -1,19 +1,79 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { JwtAuthGuard } from '../users/jwt/auth-guard';
 import { Roles } from '../users/roles/roles.decorator';
 import { RolesGuard } from '../users/roles/roles.guard';
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import * as fs from 'fs';
 @Controller('applications')
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) { }
+  constructor(private readonly applicationsService: ApplicationsService
+  ) { }
 
   // Jobseekers can create applications
   @Roles('jobseeker')
-  @Post()
+  @Post('/create-application')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const uploadPath = './uploads/resumes';
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+
+          cb(null, uploadPath);
+        },
+        filename: (req, file, cb) => {
+          const uniqueName = Date.now() + '-' + Math.floor(Math.random() * 1000000);
+          const fileExtension = extname(file.originalname);
+          cb(null, uniqueName + fileExtension);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        const isPdf = file.mimetype === 'application/pdf';
+        cb(isPdf ? null : new Error('Only pdf files are allowed!'), isPdf);
+      },
+      limits: { fileSize: 5 * 1024 * 1024 },
+    })
+  )
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        jobId: { type: 'string', format: 'uuid' },
+        applicantId: { type: 'string', format: 'uuid' },
+        coverLetter: { type: 'string' },
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['jobId', 'applicantId', 'file'],
+    },
+  })
+
+  async uploadResume(@Body() data: string, @UploadedFile() file: Express.Multer.File) {
+    const fileUrl = `http://localhost:3000/uploads/resumes/${file.filename}`
+    
+    return this.applicationsService.saveResumePath(data, fileUrl);
+  }
+
+
+
+
+
+
+
+
   create(@Body() createApplicationDto: CreateApplicationDto) {
     return this.applicationsService.create(createApplicationDto);
   }

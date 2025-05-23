@@ -9,14 +9,17 @@ import { JwtModule } from '@nestjs/jwt';
 import { MailModule } from 'src/modules/users/nodemailer/nodemailer.module';
 import { MailService } from 'src/modules/users/nodemailer/nodemailer.service';
 import { PasswordModule } from './forget-password/forget-password.module';
-
+import { SearchModule } from '../search/search.module';
+import { SearchService } from '../search/search.service';
+ 
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule,
     MailModule,
-    PasswordModule
+    PasswordModule,
+    SearchModule,
 
   ],
   controllers: [UsersController],
@@ -25,10 +28,10 @@ import { PasswordModule } from './forget-password/forget-password.module';
     GoogleStrategy,
     AuthService,
     MailService,
-    
+
   ],
 
-  exports:[UsersService]
+  exports: [UsersService]
 })
 export class UsersModule { }
 

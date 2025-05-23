@@ -54,5 +54,34 @@ export class CreateJobDto {
     salary: string;
 
 
+    @ApiProperty({
+        description: 'Category of work (IT, Education, Marketing)',
+        example: 'IT'
+    })
+    @IsNotEmpty()
+    @IsString()
+    jobCategory: string;
+
+
+    @ApiProperty({
+        description: 'Required skills or anything company requires',
+        example: 'Responsibility, and English B2'
+    })
+    @IsNotEmpty()
+    @IsString()
+    requirements:string
+
+    @ApiProperty({
+        description: 'Company name',
+        example: 'Epam'
+    })
+    @IsNotEmpty()
+    @IsString()
+    companyName: string;
+
+ 
+
+   
+
     // recruiter id should come from jwt ParamsTokenFactory, and will get it from controller
 }

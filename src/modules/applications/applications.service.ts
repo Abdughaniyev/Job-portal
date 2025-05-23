@@ -20,6 +20,7 @@ export class ApplicationsService {
         where: {
           job: { id: createApplicationDto.jobId },
           applicant: { id: createApplicationDto.applicantId },
+          coverLetter: createApplicationDto.coverLetter,
           createdAt: MoreThan(dateLimit)
         },
         relations: ['job', 'applicant']
@@ -30,9 +31,9 @@ export class ApplicationsService {
     }
 
     const newApplication = this.appRepository.create({
-      ...createApplicationDto,
       job: { id: createApplicationDto.jobId },
-      applicant: { id: createApplicationDto.applicantId }
+      applicant: { id: createApplicationDto.applicantId },
+      coverLetter: createApplicationDto.coverLetter
     })
 
     const savedApplication = await this.appRepository.save(newApplication)
@@ -82,6 +83,15 @@ export class ApplicationsService {
   async countApplication(): Promise<number> {
     const countApplications = await this.appRepository.count()
     return countApplications;
+  }
+
+
+  async saveResumePath(data: string, fileUrl: string) {
+
+    if (!fileUrl) {
+      throw new NotFoundException('Resume link not found!')
+    }
+    return new ResData('Resume uploaded successfully!', 200, { data, fileUrl })
   }
 }
 

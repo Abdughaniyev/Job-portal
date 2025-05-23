@@ -10,7 +10,7 @@ export class Application extends BaseEntity {    // Ariza
 
 
     @Column({ name: 'resume_url', nullable: true })
-    resumeUrl: string;
+    resume: string;
 
     @Column({ name: 'cover_letter', nullable: false })
     coverLetter: string;
@@ -21,7 +21,7 @@ export class Application extends BaseEntity {    // Ariza
         default: ApplicationStatusEnum.PENDING,
     })
     status: ApplicationStatusEnum;
-
+    
 
     // All applications submitted to this job
     @ManyToOne(() => Job, (job) => job.applications)
