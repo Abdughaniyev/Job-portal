@@ -5,6 +5,7 @@ import { MoreThan, Repository } from 'typeorm';
 import { Application } from './entities/application.entity';
 import { ResData } from 'src/lib/resData';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ApplicationStatusEnum } from 'src/common/enums/application-status';
 
 @Injectable()
 export class ApplicationsService {
@@ -33,7 +34,8 @@ export class ApplicationsService {
     const newApplication = this.appRepository.create({
       job: { id: createApplicationDto.jobId },
       applicant: { id: createApplicationDto.applicantId },
-      coverLetter: createApplicationDto.coverLetter
+      coverLetter: createApplicationDto.coverLetter,
+      status: ApplicationStatusEnum.PENDING,
     })
 
     const savedApplication = await this.appRepository.save(newApplication)
@@ -47,7 +49,7 @@ export class ApplicationsService {
   }
 
   async findOne(id: string) {
-    const oneApplication = await this.appRepository.findOne({ where: { id } })
+    const oneApplication = await this.appRepository.findOne({ where: { id }, relations: ['applicant'] })
     if (!oneApplication) {
       throw new NotFoundException('Application not found!')
     }
@@ -55,6 +57,37 @@ export class ApplicationsService {
     return new ResData('Application retrieved successfully', 200, oneApplication)
 
   }
+
+  async acceptApplication(id: string) {
+    const app = await this.appRepository.findOne({
+      where: { id },
+      relations: ['applicant'],
+    });
+
+    if (!app) {
+      throw new NotFoundException('Application not found!')
+    }
+
+    app.status = ApplicationStatusEnum.ACCEPTED;
+    await this.appRepository.save(app)
+    return new ResData('Application has been accepted!', 200, { jobseeker: app.applicant })
+  }
+
+
+  async rejectApplication(id: string) {
+    const application = await this.appRepository.findOne({
+      where: { id },
+      relations: ['applicant']
+    })
+
+    if (!application) {
+      throw new NotFoundException('Application not found!')
+    }
+    application.status = ApplicationStatusEnum.REJECTED
+    await this.appRepository.save(application)
+    return new ResData('Application has been rejected!', 200, { jobseeker: application.applicant })
+  }
+
 
   async update(id: string, updateApplicationDto: UpdateApplicationDto) {
     const updatableCode = await this.appRepository.findOne({ where: { id } })

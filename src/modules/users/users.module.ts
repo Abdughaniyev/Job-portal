@@ -9,9 +9,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { MailModule } from 'src/modules/users/nodemailer/nodemailer.module';
 import { MailService } from 'src/modules/users/nodemailer/nodemailer.service';
 import { PasswordModule } from './forget-password/forget-password.module';
-import { SearchModule } from '../search/search.module';
-import { SearchService } from '../search/search.service';
- 
+import { SearchModule } from '../jobs/search/search.module';
+import { SearchService } from '../jobs/search/search.service';
+
 
 @Module({
   imports: [

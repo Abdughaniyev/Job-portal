@@ -12,6 +12,7 @@ export class DashboardService {
         private readonly usersService: UsersService,
         private readonly applicationsService: ApplicationsService,
     ) { }
+    
     async getSummary() {
         const totalUsers = await this.usersService.countUsers()
         const totalApplications = await this.applicationsService.countApplication()

@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { SearchService } from "./search.service";
 import { SearchController } from "./search.controller";
-import { Job } from "../jobs/entities/job.entity";
+import { Job } from "../entities/job.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({

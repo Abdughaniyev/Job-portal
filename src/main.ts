@@ -54,4 +54,3 @@ async function bootstrap() {
 bootstrap();
 
 
-// Search jobs and by keyword and filter them.

@@ -28,7 +28,6 @@ export class JobsService {
         jobCategory: createJobDto.jobCategory,
         companyName: createJobDto.companyName,
         requirements: createJobDto.requirements,
-
         createdAt: MoreThan(repostLimitDate),
 
       },

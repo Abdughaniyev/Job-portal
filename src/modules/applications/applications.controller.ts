@@ -59,24 +59,17 @@ export class ApplicationsController {
       },
       required: ['jobId', 'applicantId', 'file'],
     },
+  
   })
-
   async uploadResume(@Body() data: string, @UploadedFile() file: Express.Multer.File) {
     const fileUrl = `http://localhost:3000/uploads/resumes/${file.filename}`
-    
+
     return this.applicationsService.saveResumePath(data, fileUrl);
   }
-
-
-
-
-
-
-
-
   create(@Body() createApplicationDto: CreateApplicationDto) {
     return this.applicationsService.create(createApplicationDto);
   }
+
 
   // Jobseekers can view all their applications
   @Roles('jobseeker')
@@ -94,6 +87,21 @@ export class ApplicationsController {
     return this.applicationsService.findOne(id);
   }
 
+
+  @Roles('recruiter')
+  @Patch('status/accept/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  acceptApplication(@Param('id') id: string) {
+    return this.applicationsService.acceptApplication(id)
+  }
+
+  @Roles('recruiter')
+  @Patch("status/reject/:id")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  rejectApplication(@Param('id') id: string) {
+    return this.applicationsService.rejectApplication(id)
+  }
+
   // Jobseekers can update their own applications
   @Roles('jobseeker')
   @Patch(':id')
@@ -104,7 +112,7 @@ export class ApplicationsController {
 
   // Admins can delete any application
   @Roles('admin')
-  @Delete(':id')
+  @Delete('update/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.applicationsService.remove(id);
