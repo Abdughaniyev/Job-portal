@@ -39,4 +39,6 @@ export class Job extends BaseEntity {
 
     @ManyToOne(() => User, (user) => user.postedJobs)
     recruiter: User;
+
+
 }

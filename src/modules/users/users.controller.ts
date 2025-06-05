@@ -58,14 +58,14 @@ export class UsersController {
   // ADMIN: GET ALL USERS
   @Get()
   @Roles('admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   findAll() {
     return this.usersService.findAll();
   }
 
   //USER: GET OWN PROFILE 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
@@ -75,7 +75,7 @@ export class UsersController {
 
   @Patch(':id')
   @Roles('admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
@@ -83,7 +83,7 @@ export class UsersController {
   // ADMIN: DELETE USER 
   @Delete(':id')
   @Roles('admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

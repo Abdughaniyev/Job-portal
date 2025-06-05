@@ -14,7 +14,7 @@ export class JobsController {
   // Recruiters can create a new job post
   @Roles('recruiter')
   @Post('/create-job')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   create(@Body() createJobDto: CreateJobDto) {
     return this.jobsService.create(createJobDto);
   }
@@ -22,14 +22,14 @@ export class JobsController {
   // Admin and Recruiter can view all jobs (admins may want to see everything)
   @Roles('recruiter', 'admin')
   @Get('/all-jobs')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   findAll() {
     return this.jobsService.findAll();
   }
 
   // Anyone (authenticated user) can view a specific job post
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)  // No role guard since this can be viewed by anyone (e.g., jobseeker, recruiter, admin)
+  @Get('find-one/:id')
+  // @UseGuards(JwtAuthGuard)  // No role guard since this can be viewed by anyone (e.g., jobseeker, recruiter, admin)
   findOne(@Param('id') id: string) {
     return this.jobsService.findOne(id);
   }
@@ -37,15 +37,15 @@ export class JobsController {
   // Recruiters can update their own job postings
   @Roles('recruiter')
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.jobsService.update(id, updateJobDto);
   }
 
   // Recruiters can delete their own job postings
   @Roles('recruiter')
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete('delete/:id')
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.jobsService.remove(id);
   }

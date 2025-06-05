@@ -35,7 +35,7 @@ async function bootstrap() {
   )
 
   const options = new DocumentBuilder()
-    .setTitle('Product_Typeorm')
+    .setTitle('API collection')
     .setDescription('Description')
     .setVersion('1.0.0')
     .addServer(`http://localhost:${config.port}`, 'Local environment')

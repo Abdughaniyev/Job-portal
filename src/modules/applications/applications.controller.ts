@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
@@ -10,6 +10,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import * as fs from 'fs';
+
 @Controller('applications')
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService
@@ -18,7 +19,7 @@ export class ApplicationsController {
   // Jobseekers can create applications
   @Roles('jobseeker')
   @Post('/create-application')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -59,22 +60,21 @@ export class ApplicationsController {
       },
       required: ['jobId', 'applicantId', 'file'],
     },
-  
-  })
-  async uploadResume(@Body() data: string, @UploadedFile() file: Express.Multer.File) {
-    const fileUrl = `http://localhost:3000/uploads/resumes/${file.filename}`
 
-    return this.applicationsService.saveResumePath(data, fileUrl);
-  }
-  create(@Body() createApplicationDto: CreateApplicationDto) {
-    return this.applicationsService.create(createApplicationDto);
+  })
+  create(
+    @Body() createApplicationDto: CreateApplicationDto,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    const fileUrl = `${process.env.BASE_URL}/resumes/${file.filename}`
+    return this.applicationsService.create(createApplicationDto, fileUrl);
   }
 
 
   // Jobseekers can view all their applications
   @Roles('jobseeker')
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   findAll() {
     return this.applicationsService.findAll();
   }
@@ -82,38 +82,91 @@ export class ApplicationsController {
   // Admins and Jobseekers can view a specific application by ID
   @Roles('jobseeker', 'admin')
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   findOne(@Param('id') id: string) {
     return this.applicationsService.findOne(id);
   }
 
 
+
+
+  // Jobseekers can update their own applications
+  @Roles('jobseeker')
+  @Patch(':id')
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const uploadPath = './uploads/resumes';
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+
+          cb(null, uploadPath);
+        },
+        filename: (req, file, cb) => {
+          const uniqueName = Date.now() + '-' + Math.floor(Math.random() * 1000000);
+          const fileExtension = extname(file.originalname);
+          cb(null, uniqueName + fileExtension);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        const isPdf = file.mimetype === 'application/pdf';
+        cb(isPdf ? null : new Error('Only pdf files are allowed!'), isPdf);
+      },
+      limits: { fileSize: 5 * 1024 * 1024 },
+    })
+  )
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        jobId: { type: 'string', format: 'uuid' },
+        applicantId: { type: 'string', format: 'uuid' },
+        coverLetter: { type: 'string' },
+        status: {
+          type: 'string',
+          enum: ['pending', 'accepted', 'rejected'],
+        },
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['jobId', 'applicantId', 'file'],
+    },
+
+  })
+  update(
+    @Param('id') id: string,
+    @Body() updateApplicationDto: UpdateApplicationDto,
+    @UploadedFile() file: Express.Multer.File) {
+    const fileUrl = `${process.env.BASE_URL}/resumes/${file.filename}`
+    return this.applicationsService.update(id, updateApplicationDto, fileUrl);
+  }
+
   @Roles('recruiter')
   @Patch('status/accept/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   acceptApplication(@Param('id') id: string) {
     return this.applicationsService.acceptApplication(id)
   }
 
   @Roles('recruiter')
   @Patch("status/reject/:id")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   rejectApplication(@Param('id') id: string) {
     return this.applicationsService.rejectApplication(id)
   }
 
-  // Jobseekers can update their own applications
-  @Roles('jobseeker')
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  update(@Param('id') id: string, @Body() updateApplicationDto: UpdateApplicationDto) {
-    return this.applicationsService.update(id, updateApplicationDto);
-  }
 
   // Admins can delete any application
   @Roles('admin')
-  @Delete('update/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete('delete/:id')
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.applicationsService.remove(id);
   }

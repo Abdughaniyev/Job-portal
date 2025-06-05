@@ -1,22 +1,23 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { MoreThan, Repository } from 'typeorm';
+import { MoreThan, Not, Repository } from 'typeorm';
 import { Application } from './entities/application.entity';
 import { ResData } from 'src/lib/resData';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApplicationStatusEnum } from 'src/common/enums/application-status';
-
+import { join } from 'path';
+import * as fs from 'fs'
 @Injectable()
 export class ApplicationsService {
   constructor(@InjectRepository(Application) private readonly appRepository: Repository<Application>) { }
 
-  async create(createApplicationDto: CreateApplicationDto) {
+  async create(createApplicationDto: CreateApplicationDto, fileUrl: string) {
     const daysLimit = 7;
     const dateLimit = new Date()
     dateLimit.setDate(dateLimit.getDate() - daysLimit)
 
-    const existingApplication = await this.appRepository.findOne(
+    const application = await this.appRepository.findOne(
       {
         where: {
           job: { id: createApplicationDto.jobId },
@@ -27,7 +28,7 @@ export class ApplicationsService {
         relations: ['job', 'applicant']
       })
 
-    if (existingApplication) {
+    if (application) {
       throw new ConflictException('You have already applied to this job!')
     }
 
@@ -35,11 +36,14 @@ export class ApplicationsService {
       job: { id: createApplicationDto.jobId },
       applicant: { id: createApplicationDto.applicantId },
       coverLetter: createApplicationDto.coverLetter,
-      status: ApplicationStatusEnum.PENDING,
+      // status: ApplicationStatusEnum.PENDING,
     })
 
+    if (!fileUrl) {
+      throw new NotFoundException('No file url found!')
+    }
+    newApplication.resume = fileUrl
     const savedApplication = await this.appRepository.save(newApplication)
-
     return new ResData('Application submitted successfully!', 201, savedApplication)
   }
 
@@ -68,7 +72,7 @@ export class ApplicationsService {
       throw new NotFoundException('Application not found!')
     }
 
-    app.status = ApplicationStatusEnum.ACCEPTED;
+    // app.status = ApplicationStatusEnum.ACCEPTED;
     await this.appRepository.save(app)
     return new ResData('Application has been accepted!', 200, { jobseeker: app.applicant })
   }
@@ -83,21 +87,40 @@ export class ApplicationsService {
     if (!application) {
       throw new NotFoundException('Application not found!')
     }
-    application.status = ApplicationStatusEnum.REJECTED
+    // application.status = ApplicationStatusEnum.REJECTED
     await this.appRepository.save(application)
     return new ResData('Application has been rejected!', 200, { jobseeker: application.applicant })
   }
 
 
-  async update(id: string, updateApplicationDto: UpdateApplicationDto) {
-    const updatableCode = await this.appRepository.findOne({ where: { id } })
-    if (!updatableCode) {
+  async update(id: string, updateApplicationDto: UpdateApplicationDto, updateFileUrl: string) {
+    const application = await this.appRepository.findOne({ where: { id } })
+
+    if (!application) {
       throw new NotFoundException('Application not found!')
     }
 
-    await this.appRepository.update(id, updateApplicationDto)
-    const updatedCode = await this.appRepository.findOne({ where: { id } })
-    return new ResData('Application has been updated successfully!', 200, updatedCode)
+    if (!application.resume) {
+      throw new NotFoundException('No file url found!')
+    }
+
+    const filePath = application.resume.replace(`${process.env.BASE_URL}`, '');
+    const oldFilePath = join(__dirname, '..', '..', '..', 'uploads', filePath)
+
+    fs.unlink(oldFilePath, (err) => {
+      if (err) {
+        console.warn('Failed to delete old image:', err.message)
+      }
+    })
+
+    if (!updateFileUrl) {
+      throw new NotFoundException('No file url found!')
+    }
+
+    const adjusted = { ...updateApplicationDto, resume: updateFileUrl }
+    Object.assign(application, adjusted)
+    await this.appRepository.save(application)
+    return new ResData('Application has been updated successfully!', 200, application)
 
   }
 
@@ -119,13 +142,7 @@ export class ApplicationsService {
   }
 
 
-  async saveResumePath(data: string, fileUrl: string) {
 
-    if (!fileUrl) {
-      throw new NotFoundException('Resume link not found!')
-    }
-    return new ResData('Resume uploaded successfully!', 200, { data, fileUrl })
-  }
 }
 
 

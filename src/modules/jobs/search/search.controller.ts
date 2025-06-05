@@ -9,13 +9,13 @@ export class SearchController {
 
     @UseGuards(JwtAuthGuard)
     @Roles('admin', 'jobseeker')
-    @Get('search-job')
+    @Get('/search-job')
 
     search(
 
         @Query('title') title: string,
         @Query('salary') salary: string,
-        @Query('jobCategory') jobCategory?: string,
+        @Query('category') jobCategory?: string,
 
     ) {
         return this.searchService.search({ title, salary, jobCategory });
