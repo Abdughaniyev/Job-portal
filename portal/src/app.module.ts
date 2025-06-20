@@ -14,12 +14,12 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 @Module({
 
   imports: [
-    ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
+    ConfigModule.forRoot({ envFilePath: `.env.${process.env.NODE_ENV || 'development'}`, isGlobal: true }),
     CacheModule.registerAsync({
       useFactory: async () => ({
         store: redisStore,
-        host: 'localhost',
-        port: 6379,
+        host: process.env.REDIS_HOST || 'localhost',
+        port: Number(process.env.REDIS_PORT) || 6379,
         ttl: 300,
       })
     }),
@@ -31,7 +31,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
       password: process.env.DATABASE_PASSWORD || '8808',
       database: process.env.DATABASE || 'jobportal',
       autoLoadEntities: true,
-      synchronize: true
+      synchronize: false
     }),
     UsersModule,
     JobsModule,
