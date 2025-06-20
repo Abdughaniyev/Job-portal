@@ -171,7 +171,7 @@ export class UsersService {
       prevPage: page > 1 ? page - 1 : null,
 
     }
-
+      
 
     return new ResData('All users have been retrieved successfully!', 200, result)
   }

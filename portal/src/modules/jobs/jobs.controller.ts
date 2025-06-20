@@ -23,7 +23,7 @@ export class JobsController {
   }
 
   // Admin and Recruiter can view all jobs (admins may want to see everything)
-  @Roles('recruiter', 'admin')
+  @Roles('admin')
   @Get('/all-jobs')
   @UseGuards(JwtAuthGuard, RolesGuard)
   findAll(@Query() pagination: PaginationDto) {
