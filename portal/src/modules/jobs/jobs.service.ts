@@ -6,6 +6,7 @@ import { Job } from './entities/job.entity';
 import { MoreThan } from 'typeorm';
 import { ResData } from 'src/lib/resData';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationDto } from 'src/lib/paginationGeneral.dto';
 
 
 
@@ -84,9 +85,23 @@ export class JobsService {
 
 
 
-  async findAll() {
-    const allJobs = await this.jobRepository.find()
-    return new ResData('All jobs have been found successfully!', 200, allJobs)
+  async findAll(pagination: PaginationDto) {
+
+    const { page = 1, limit = 10 } = pagination;
+    const [data, total] = await this.jobRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' }
+    })
+
+    const result = {
+      data, total, page,
+
+      lastPage: Math.ceil(total / limit),
+      nextPage: page < Math.ceil(total / limit) ? page + 1 : null,
+      prevPage: page > 1 ? page - 1 : null,
+    }
+    return new ResData('Jobs have been found successfully', 200, result)
   }
 
 
@@ -127,7 +142,7 @@ export class JobsService {
 
     return new ResData('Job has been deleted successfully!', 200, removIt)
   }
-  
+
   async countJobs(): Promise<number> {
     const countJobs = await this.jobRepository.count()
     return countJobs;

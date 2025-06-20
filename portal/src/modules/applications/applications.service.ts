@@ -9,6 +9,7 @@ import { ApplicationStatusEnum } from 'src/common/enums/application-status';
 import { join } from 'path';
 import * as fs from 'fs'
 import { MailService } from '../users/nodemailer/nodemailer.service';
+import { PaginationDto } from 'src/lib/paginationGeneral.dto';
 @Injectable()
 export class ApplicationsService {
   constructor(@InjectRepository(Application)
@@ -66,9 +67,26 @@ export class ApplicationsService {
     return new ResData('Application submitted successfully!', 201, savedApplication)
   }
 
-  async findAll() {
-    const allApplications = await this.appRepository.find({ relations: ['job', 'applicant'] })
-    return new ResData('All applications retrieved successfully', 200, allApplications)
+  async findAll(pagination: PaginationDto) {
+ 
+    const { page = 1, limit = 10 } = pagination;
+    const [data, total] = await this.appRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' }
+    })
+
+
+    const result = {
+      data, total, page,
+
+      lastPage: Math.ceil(total / limit),
+      nextPage: page < Math.ceil(total / limit) ? page + 1 : null,
+      prevPage: page > 1 ? page - 1 : null,
+
+    }
+
+    return new ResData('All applications retrieved successfully', 200, result)
   }
 
   async findOne(id: string) {

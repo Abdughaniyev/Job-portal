@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Query } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../users/jwt/auth-guard';
 import { Roles } from '../users/roles/roles.decorator';
 import { RolesGuard } from '../users/roles/roles.guard';
 import { RequestWithUser } from '../users/jwt/request-with-user.interface';
+import { PaginationDto } from 'src/lib/paginationGeneral.dto';
 
 @Controller('jobs')
 export class JobsController {
@@ -25,8 +26,8 @@ export class JobsController {
   @Roles('recruiter', 'admin')
   @Get('/all-jobs')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  findAll() {
-    return this.jobsService.findAll();
+  findAll(@Query() pagination: PaginationDto) {
+    return this.jobsService.findAll(pagination);
   }
 
   // Anyone (authenticated user) can view a specific job post

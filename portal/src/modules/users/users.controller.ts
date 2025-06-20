@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -23,6 +24,7 @@ import { ResetPasswordDto } from './forget-password/dto/reset-password.dto';
 import { JwtRefreshAuthGuard } from './jwt/refresh-guard';
 import { RequestWithUser } from './jwt/request-with-user.interface';
 import { Request } from 'express';
+import { PaginationDto } from 'src/lib/paginationGeneral.dto';
 
 @Controller('users')
 export class UsersController {
@@ -87,8 +89,8 @@ export class UsersController {
   @Get()
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() pagination: PaginationDto) {
+    return this.usersService.findAll(pagination);
   }
 
   // USER: GET OWN PROFILE 

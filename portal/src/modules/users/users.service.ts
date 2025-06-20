@@ -11,6 +11,7 @@ import * as  jwt from 'jsonwebtoken'
 import { RoleEnum } from 'src/common/enums/roleEnum';
 import { config } from 'src/common/config/config';
 import { JwtPayload } from 'src/common/interfaces/jwtPayload';
+import { PaginationDto } from 'src/lib/paginationGeneral.dto';
 
 
 @Injectable()
@@ -96,8 +97,8 @@ export class UsersService {
   async logout(userId: string, refreshTokenFromClient: string) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!refreshTokenFromClient) {
-    throw new ForbiddenException('No refresh token provided');
-  }
+      throw new ForbiddenException('No refresh token provided');
+    }
     if (!user || !user.refreshToken) {
       throw new ForbiddenException('User not found or no refresh token');
     }
@@ -142,13 +143,37 @@ export class UsersService {
   }
 
 
-  async findAll() {
-    const allUsers = await this.userRepository.find()
+  async findAll(pagination: PaginationDto) {
 
-    if (allUsers.length === 0) {
-      throw new NotFoundException('Users not found!')
+    const { page = 1, limit = 10 } = pagination;
+    const [data, total] = await this.userRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' }
+    })
+
+    if (total === 0) {
+      return new ResData('No users found!', 200, {
+        data: [],
+        total: 0,
+        page,
+        lastPage: 0,
+        nextPage: null,
+        prevPage: null,
+      });
     }
-    return new ResData('All users have been retrieved successfully!', 200, allUsers)
+
+    const result = {
+      data, total, page,
+
+      lastPage: Math.ceil(total / limit),
+      nextPage: page < Math.ceil(total / limit) ? page + 1 : null,
+      prevPage: page > 1 ? page - 1 : null,
+
+    }
+
+
+    return new ResData('All users have been retrieved successfully!', 200, result)
   }
 
   async findOne(id: string) {

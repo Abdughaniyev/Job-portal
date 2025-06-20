@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, Query, } from '@nestjs/common';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
@@ -10,6 +10,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import * as fs from 'fs';
+import { PaginationDto } from 'src/lib/paginationGeneral.dto';
 
 @Controller('applications')
 export class ApplicationsController {
@@ -86,8 +87,8 @@ export class ApplicationsController {
   @Roles('jobseeker')
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  findAll() {
-    return this.applicationsService.findAll();
+  findAll(@Query() pagination: PaginationDto) {
+    return this.applicationsService.findAll(pagination);
   }
 
   // Admins and Jobseekers can view a specific application by ID
