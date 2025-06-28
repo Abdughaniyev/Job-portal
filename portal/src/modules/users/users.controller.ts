@@ -25,7 +25,7 @@ import { JwtRefreshAuthGuard } from './jwt/refresh-guard';
 import { RequestWithUser } from './jwt/request-with-user.interface';
 import { Request } from 'express';
 import { PaginationDto } from 'src/lib/paginationGeneral.dto';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { LogoutDto } from './dto/logout.dto';
 
 @Controller('users')
@@ -47,6 +47,7 @@ export class UsersController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
+  @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: 'object',
