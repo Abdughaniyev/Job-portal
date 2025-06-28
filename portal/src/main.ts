@@ -52,7 +52,16 @@ async function bootstrap() {
     .addServer('/', 'Production') // Always works in deployed environments
     .addServer(`http://localhost:${config.port}`, 'Local') // Optional: visible in Swagger locally
     .addTag('APIs')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
