@@ -7,7 +7,9 @@ import { Roles } from '../users/roles/roles.decorator';
 import { RolesGuard } from '../users/roles/roles.guard';
 import { RequestWithUser } from '../users/jwt/request-with-user.interface';
 import { PaginationDto } from 'src/lib/paginationGeneral.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth('access-token')
 @Controller('jobs')
 export class JobsController {
 

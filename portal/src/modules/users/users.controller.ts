@@ -25,6 +25,7 @@ import { JwtRefreshAuthGuard } from './jwt/refresh-guard';
 import { RequestWithUser } from './jwt/request-with-user.interface';
 import { Request } from 'express';
 import { PaginationDto } from 'src/lib/paginationGeneral.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -43,6 +44,7 @@ export class UsersController {
     return this.usersService.login(loginUserDto);
   }
 
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Post('log-out')
   logout(@Req() req: Request) {
@@ -56,6 +58,7 @@ export class UsersController {
 
 
   // PASSWORD RESET FLOW
+
   @Post('reset-password')
   resetPassword(@Body() body: ResetPasswordDto) {
     return this.passwordService.randomPassword(body.email);
@@ -65,7 +68,7 @@ export class UsersController {
   verifyCode(@Body() verifyDto: VerifyDto) {
     return this.passwordService.verifyCode(verifyDto.email, verifyDto.resetPassword);
   }
-
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh')
   refresh(@Req() req: RequestWithUser) {
@@ -75,9 +78,11 @@ export class UsersController {
   }
 
   // GOOGLE AUTH 
+
   @Get('google')
   @UseGuards(GoogleAuthGuard)
   googleAuth() { }
+
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
@@ -86,6 +91,7 @@ export class UsersController {
   }
 
   // ADMIN: GET ALL USERS
+  @ApiBearerAuth('access-token')
   @Get()
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -94,6 +100,7 @@ export class UsersController {
   }
 
   // USER: GET OWN PROFILE 
+  @ApiBearerAuth('access-token')
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
@@ -101,6 +108,7 @@ export class UsersController {
   }
 
   // ADMIN: UPDATE USER
+  @ApiBearerAuth('access-token')
   @Patch(':id')
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -109,6 +117,7 @@ export class UsersController {
   }
 
   // ADMIN: DELETE USER 
+  @ApiBearerAuth('access-token')
   @Delete(':id')
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)

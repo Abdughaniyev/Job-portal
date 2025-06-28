@@ -8,10 +8,11 @@ import { RolesGuard } from '../users/roles/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import * as fs from 'fs';
 import { PaginationDto } from 'src/lib/paginationGeneral.dto';
 
+@ApiBearerAuth('access-token')
 @Controller('applications')
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService

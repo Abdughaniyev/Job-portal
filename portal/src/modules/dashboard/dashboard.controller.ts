@@ -5,9 +5,9 @@ import { Roles } from "../users/roles/roles.decorator";
 import { DashboardService } from "./dashboard.service";
 import { ApiBearerAuth } from "@nestjs/swagger";
 
+@ApiBearerAuth('access-token')
 @Controller('dashboard')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@ApiBearerAuth('access-token')
 @Roles('admin')
 export class DashboardController {
     constructor(private readonly dashboardService: DashboardService) { }
