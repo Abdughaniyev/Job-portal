@@ -47,7 +47,6 @@ export class UsersController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
-  @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: 'object',
