@@ -25,7 +25,8 @@ import { JwtRefreshAuthGuard } from './jwt/refresh-guard';
 import { RequestWithUser } from './jwt/request-with-user.interface';
 import { Request } from 'express';
 import { PaginationDto } from 'src/lib/paginationGeneral.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { LogoutDto } from './dto/logout.dto';
 
 @Controller('users')
 export class UsersController {
@@ -46,8 +47,17 @@ export class UsersController {
 
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        refreshToken: { type: 'string', example: 'your-refresh-token-here' },
+      },
+      required: ['refreshToken'],
+    },
+  })
   @Post('log-out')
-  logout(@Req() req: Request) {
+  logout(@Req() req: RequestWithUser, @Body() body: LogoutDto) {
     console.log('req.user:', req.user);
     const user = req.user as { userId: string };
 
