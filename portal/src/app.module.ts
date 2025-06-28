@@ -42,7 +42,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
       type: 'postgres',
       url: process.env.DATABASE_URL,
       autoLoadEntities: true,
-      synchronize: false, // Turn off in production for safety
+      synchronize: true, // Turn off in production for safety
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
     }),
 
