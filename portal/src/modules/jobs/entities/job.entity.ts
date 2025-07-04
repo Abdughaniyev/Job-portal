@@ -52,16 +52,22 @@ export class Job extends BaseEntity {
 
 
 
-    @Column({ name: 'salary', type: 'varchar', length: 150, nullable: true })
-    salary?: string;
+
 
     // Compare Job dto and Entity have the same translations
 
     @Column({ name: 'job_type', type: 'enum', enum: JobType, nullable: false })
     jobType: JobType;
 
+
+    @Column({ name: 'salary', type: 'varchar', length: 150, nullable: true })
+    salary?: string;
+
     @Column({ name: 'job_category', type: 'varchar', length: 150, nullable: false })
     jobCategory: string;
+
+    @Column({ name: 'job_title', type: 'varchar', nullable: false })
+    jobTitle: string;
 
     @Column({ name: 'company_name', type: 'varchar', length: 150, nullable: false })
     companyName: string;
