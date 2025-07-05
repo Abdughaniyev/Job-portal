@@ -66,8 +66,6 @@ export class Job extends BaseEntity {
     @Column({ name: 'job_category', type: 'varchar', length: 150, nullable: false })
     jobCategory: string;
 
-    @Column({ name: 'job_title', type: 'varchar', nullable: false })
-    jobTitle: string;
 
     @Column({ name: 'company_name', type: 'varchar', length: 150, nullable: false })
     companyName: string;
