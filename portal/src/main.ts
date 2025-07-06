@@ -18,7 +18,7 @@ async function bootstrap() {
     origin:
       process.env.NODE_ENV === 'production'
         ? ['https://job-portal-production-9e00.up.railway.app']
-        : 'http://localhost:3001',
+        : 'http://localhost:5176',
     credentials: true,
   });
 
