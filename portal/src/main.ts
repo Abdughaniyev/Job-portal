@@ -14,14 +14,15 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Allow all origins in production, only localhost in dev
-  app.enableCors({
+ app.enableCors({
     origin:
       process.env.NODE_ENV === 'production'
-        ? ['https://job-portal-production-9e00.up.railway.app']
+        ? process.env.FRONTEND_URL
         : 'http://localhost:5176',
     credentials: true,
   });
 
+  
   app.useBodyParser('json');
   app.use(helmet());
   // Global prefix for all routes (e.g., /api/v1/users)
