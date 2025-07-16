@@ -8,10 +8,10 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 @ApiBearerAuth('access-token')
 @Controller('dashboard')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin')
+
 export class DashboardController {
     constructor(private readonly dashboardService: DashboardService) { }
-
+    @Roles('admin')
     @Get('summary')
     getSummary() {
         return this.dashboardService.getSummary()
