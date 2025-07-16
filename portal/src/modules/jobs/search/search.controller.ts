@@ -16,7 +16,7 @@ export class SearchController {
     search(
 
         @Query('title') title: string,
-        @Query('salary') salary: string,
+        @Query('salary') salary?: string,
         @Query('category') jobCategory?: string,
 
     ) {
