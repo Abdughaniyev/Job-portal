@@ -182,8 +182,8 @@ export class ApplicationsController {
   }
 
 
-  // Admins can delete any application
-  @Roles('admin')
+  // Admins and jobseekers can delete any application
+  @Roles('admin', 'jobseeker')
   @Delete('delete/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
