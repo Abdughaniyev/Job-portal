@@ -1,27 +1,21 @@
-import { Controller, Get, Query, UseGuards, BadRequestException } from '@nestjs/common';
+// search.controller.ts
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../../users/jwt/auth-guard';
 import { Roles } from '../../users/roles/roles.decorator';
+import { RolesGuard } from '../../users/roles/roles.guard';
 import { SearchService } from './search.service';
-import { ApiBearerAuth } from '@nestjs/swagger';
+ import { ApiBearerAuth } from '@nestjs/swagger';
+import { SearchJobDto } from './dto/search-dto';
 
 @ApiBearerAuth('access-token')
 @Controller('search')
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin', 'jobseeker')
   @Get('/search-job')
-  search(
-    @Query('title') title?: string,
-    @Query('salary') salary?: string,
-    @Query('category') jobCategory?: string,
-    @Query('lang') lang: 'en' | 'ru' | 'uz' = 'en',
-  ) {
-    if (!title || !title.trim()) {
-      throw new BadRequestException('The title parameter is required.');
-    }
-
-    return this.searchService.search({ title, salary, jobCategory, lang });
+  search(@Query() query: SearchJobDto) {
+    return this.searchService.search(query);
   }
 }
