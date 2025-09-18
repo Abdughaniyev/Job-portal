@@ -15,14 +15,15 @@ async function bootstrap() {
 
   // Allow all origins in production, only localhost in dev
   app.enableCors({
-    origin: 'http://localhost:5173'
-    // process.env.NODE_ENV === 'production'
-    // ? process.env.FRONTEND_URL
-    // : 'http://localhost:5173',
+    origin: [
+      'http://localhost:5173', // frontend
+      'http://localhost:3000', // swagger UI
+    ],
+    credentials: true,
   });
 
 
-  app.useBodyParser('json');
+  // app.useBodyParser('json');
   app.use(helmet());
   // Global prefix for all routes (e.g., /api/v1/users)
   app.setGlobalPrefix('api/v1');

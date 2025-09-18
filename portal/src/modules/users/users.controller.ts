@@ -129,7 +129,7 @@ export class UsersController {
   // ADMIN: DELETE USER 
   @ApiBearerAuth('access-token')
   @Delete(':id')
-  @Roles('admin')
+  @Roles('jobseeker')
   @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);

@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { MoreThan, Not, Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Application } from './entities/application.entity';
 import { ResData } from 'src/lib/resData';
 import { InjectRepository } from '@nestjs/typeorm';
