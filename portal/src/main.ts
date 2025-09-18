@@ -15,10 +15,7 @@ async function bootstrap() {
 
   // Allow all origins in production, only localhost in dev
   app.enableCors({
-    origin: [
-      'http://localhost:5173', // frontend
-      'http://localhost:3000', // swagger UI
-    ],
+    origin: '*',
     credentials: true,
   });
 
