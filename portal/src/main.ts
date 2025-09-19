@@ -14,9 +14,13 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
-    origin: 'https://localhost:5173',
+    origin: [
+      process.env.FRONTEND_URL || 'http://localhost:5173',
+      'https://job-portal-production-294a.up.railway.app', // Swagger itself
+    ],
     credentials: true,
   });
+
 
   app.use(
     helmet({
