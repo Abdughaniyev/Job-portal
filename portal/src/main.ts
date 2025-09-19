@@ -13,31 +13,27 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Allow all origins in production, only localhost in dev
   app.enableCors({
-    origin: [
-      process.env.FRONTEND_URL || 'http://localhost:5173',
-      'https://job-portal-production-294a.up.railway.app', // Swagger itself
-    ],
-    credentials: true,
+    origin: ['http://localhost:5173',
+      'https://job-portal-production-294a.up.railway.app']
   });
 
 
-  app.use(
-    helmet({
-      crossOriginResourcePolicy: false,
-      crossOriginOpenerPolicy: false,
-    }),
-  );
-
+  app.useBodyParser('json');
+  app.use(helmet());
+  // Global prefix for all routes (e.g., /api/v1/users)
   app.setGlobalPrefix('api/v1');
 
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionFlter(httpAdapterHost));
 
+  // File uploads folder
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads/',
   });
 
+  // Auto-validate DTOs
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -46,13 +42,14 @@ async function bootstrap() {
     }),
   );
 
+  //   Swagger setup
   const options = new DocumentBuilder()
-    .addTag('APIs')
     .setTitle('Job Portal API')
     .setDescription('API docs for the Job Portal')
     .setVersion('1.0.0')
-    .addServer('http://localhost:3000/api/v1', 'Local')
-    .addServer('https://job-portal-production-294a.up.railway.app', 'Production')
+    .addServer('https://job-portal-production-294a.up.railway.app/api/v1', 'Production')
+    .addServer(`http://localhost:${config.port}/api/v1`, 'Local')
+    .addTag('APIs')
     .addBearerAuth(
       {
         type: 'http',
@@ -68,13 +65,14 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api-docs', app, document);
 
+  // Use PORT from env (Render/Railway provide it)
   const PORT = process.env.PORT || config.port || 3000;
 
   await app.listen(PORT, () => {
     console.log(`🚀 App running on port ${PORT}`);
     console.log(`📚 Swagger docs at /api-docs`);
+
   });
 }
-
 
 bootstrap();
