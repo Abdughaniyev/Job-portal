@@ -47,23 +47,17 @@ async function bootstrap() {
   );
 
   const options = new DocumentBuilder()
-    .addTag('APIs')
     .setTitle('Job Portal API')
     .setDescription('API docs for the Job Portal')
     .setVersion('1.0.0')
-    .addServer('http://localhost:3000/api/v1', 'Local')
-    .addServer('https://job-portal-production-294a.up.railway.app/api/v1', 'Production')
+    .addServer('http://localhost:3000', 'Local') // ✅ no /api/v1
+    .addServer('https://job-portal-production-294a.up.railway.app', 'Production') // ✅ no /api/v1
     .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'Authorization',
-        in: 'header',
-      },
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
       'access-token',
     )
     .build();
+
 
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api-docs', app, document);
