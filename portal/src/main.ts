@@ -47,8 +47,7 @@ async function bootstrap() {
     .setTitle('Job Portal API')
     .setDescription('API docs for the Job Portal')
     .setVersion('1.0.0')
-    .addServer(`http://localhost:${config.port}/api/v1`, 'Local')
-    .addServer(`${process.env.BASE_URL}/api/v1`, 'Production')
+    .addServer(`https://job-portal-production-294a.up.railway.app`, 'Production')
     .addBearerAuth(
       {
         type: 'http',
