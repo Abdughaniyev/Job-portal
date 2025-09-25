@@ -115,22 +115,41 @@ export class UsersService {
 
 
 
+  // async googleLogin(user: Record<string, any>) {
+  //   const existUser = await this.userRepository.findOne({ where: { email: user.email } })
+
+  //   let finalUser: User
+  //   if (!existUser) {
+  //     finalUser = await this.userRepository.save(user)
+  //   }
+  //   else {
+  //     finalUser = existUser;
+  //   }
+
+  //   const payload = { id: finalUser.id, email: finalUser.email, role: finalUser.role }
+  //   const accessToken = jwt.sign(payload, config.jwtAccessToken, { expiresIn: "15m" })
+
+  //   return new ResData('Log in successful!', 200, accessToken)
+  // }
+
   async googleLogin(user: Record<string, any>) {
-    const existUser = await this.userRepository.findOne({ where: { email: user.email } })
+    let finalUser = await this.userRepository.findOne({ where: { email: user.email } });
 
-    let finalUser: User
-    if (!existUser) {
-      finalUser = await this.userRepository.save(user)
-    }
-    else {
-      finalUser = existUser;
+    if (!finalUser) {
+      finalUser = await this.userRepository.save(user);
     }
 
-    const payload = { id: finalUser.id, email: finalUser.email, role: finalUser.role }
-    const accessToken = jwt.sign(payload, config.jwtAccessToken, { expiresIn: "15m" })
+    const payload = { userId: finalUser.id, email: finalUser.email, role: finalUser.role };
 
-    return new ResData('Log in successful!', 200, accessToken)
+    const accessToken = this.generateAccessToken(payload);
+    const refreshToken = this.generateRefreshToken(payload);
+
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.userRepository.update(finalUser.id, { refreshToken: hashedRefreshToken });
+
+    return { accessToken, refreshToken, user: finalUser };
   }
+
 
 
   async createUserRole(theRole: CreateUserDto) {
@@ -171,7 +190,7 @@ export class UsersService {
       prevPage: page > 1 ? page - 1 : null,
 
     }
-      
+
 
     return new ResData('All users have been retrieved successfully!', 200, result)
   }

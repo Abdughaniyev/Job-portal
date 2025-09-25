@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   Query,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -27,6 +28,7 @@ import { Request } from 'express';
 import { PaginationDto } from 'src/lib/paginationGeneral.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { LogoutDto } from './dto/logout.dto';
+import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -94,11 +96,25 @@ export class UsersController {
   googleAuth() { }
 
 
+  // @Get('google/redirect')
+  // @UseGuards(GoogleAuthGuard)
+  // googleAuthRedirect(@Req() req) {
+  //   return this.usersService.googleLogin(req.user);
+  // }
+
+
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  googleAuthRedirect(@Req() req) {
-    return this.usersService.googleLogin(req.user);
+  async googleAuthRedirect(@Req() req, @Res() res: Response) {
+    const tokens = await this.usersService.googleLogin(req.user);
+
+    // Redirect to frontend with tokens
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+    );
   }
+
+
 
   // ADMIN: GET ALL USERS
   @ApiBearerAuth('access-token')
