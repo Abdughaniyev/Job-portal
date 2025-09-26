@@ -4,7 +4,7 @@ import { RoleEnum } from "src/common/enums/roleEnum";
 import { Application } from "src/modules/applications/entities/application.entity";
 import { Job } from "src/modules/jobs/entities/job.entity";
 
-@Entity()
+@Entity('users')
 export class User extends BaseEntity {
 
     // General info

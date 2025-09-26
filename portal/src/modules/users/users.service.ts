@@ -133,13 +133,28 @@ export class UsersService {
   // }
 
   async googleLogin(user: Record<string, any>) {
-    let finalUser = await this.userRepository.findOne({ where: { email: user.email } });
+    let finalUser = await this.userRepository.findOne({
+      where: { email: user.email },
+    });
 
     if (!finalUser) {
-      finalUser = await this.userRepository.save(user);
+      finalUser = this.userRepository.create({
+        fullName: `${user.firstName || user.given_name || ''} ${user.lastName || user.family_name || ''}`.trim(),
+        email: user.email,
+        password: '', // <-- or generate a random hash if password is required
+        profileImage: user.picture,
+        role: RoleEnum.JOB_SEEKER,
+        isEmailVerified: true, // Google already verified email
+      });
+
+      finalUser = await this.userRepository.save(finalUser);
     }
 
-    const payload = { userId: finalUser.id, email: finalUser.email, role: finalUser.role };
+    const payload = {
+      userId: finalUser.id,
+      email: finalUser.email,
+      role: finalUser.role,
+    };
 
     const accessToken = this.generateAccessToken(payload);
     const refreshToken = this.generateRefreshToken(payload);
@@ -147,8 +162,13 @@ export class UsersService {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.userRepository.update(finalUser.id, { refreshToken: hashedRefreshToken });
 
-    return { accessToken, refreshToken, user: finalUser };
+    return {
+      accessToken,
+      refreshToken,
+      user: finalUser,
+    };
   }
+
 
 
 
