@@ -13,14 +13,13 @@ export const config: IConfig = {
     jwtAccessToken: process.env.JWT_ACCESS_TOKEN || '',
     jwtRefreshToken: process.env.JWT_REFRESH_TOKEN || '',
 
-    clientID: String(process.env.GOOGLE_CLIENT_ID) || '',
-    clientSecret: String(process.env.GOOGLE_CLIENT_SECRET) || '',
-    callbackURL: String(process.env.GOOGLE_CALLBACK_URL) || '',
-
+    clientID: process.env.GOOGLE_CLIENT_ID || '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    callbackURL: process.env.GOOGLE_CALLBACK_URL || '',
 
     smtpPort: Number(process.env.SMTP_PORT),
     smtpHost: String(process.env.SMTP_HOST) || '',
     smtpUser: String(process.env.SMTP_USER) || '',
     smtpPassword: String(process.env.SMTP_PASSWORD) || '',
-    ipAddress:String(process.env.IP_ADDRESS)
+    ipAddress: String(process.env.IP_ADDRESS)
 };
