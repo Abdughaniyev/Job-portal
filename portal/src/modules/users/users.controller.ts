@@ -109,13 +109,13 @@ export class UsersController {
     const tokens = await this.usersService.googleLogin(req.user);
 
     // Redirect to frontend with tokens
-    // return res.redirect(
-    //   `${process.env.FRONTEND_URL}/users/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
-    // );
-    return res.send(`
-  Access Token: ${tokens.accessToken} <br/>
-  Refresh Token: ${tokens.refreshToken}
-`);
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/users/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+    );
+//     return res.send(`
+//   Access Token: ${tokens.accessToken} <br/>
+//   Refresh Token: ${tokens.refreshToken}
+// `);
   }
 
 
