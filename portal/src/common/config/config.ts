@@ -16,7 +16,7 @@ export const config: IConfig = {
     // Google related part
     clientID: String(process.env.GOOGLE_CLIENT_ID) || '',
     clientSecret: String(process.env.GOOGLE_CLIENT_SECRET) || '',
-    callbackURL: 'https://job-portal-production-294a.up.railway.app/api/v1/users/google/redirect',
+    callbackURL: String(process.env.GOOGLE_CALLBACK_URL) || '',
 
     smtpPort: Number(process.env.SMTP_PORT),
     smtpHost: String(process.env.SMTP_HOST) || '',

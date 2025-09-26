@@ -12,7 +12,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
             clientID: config.clientID,
             clientSecret: config.clientSecret,
-            callbackURL: 'https://job-portal-production-294a.up.railway.app/api/v1/users/google/redirect',
+            callbackURL: config.callbackURL,
             // callbackURL: config.callbackURL, // for local host
             scope: ['email', 'profile'],
         });
