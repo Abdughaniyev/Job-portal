@@ -18,6 +18,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:5173',
       'https://job-portal-production-294a.up.railway.app',
+      'https://frelanser-versel-eol5.vercel.app'
     ],
     credentials: true // if you use cookies/tokens in headers
   });

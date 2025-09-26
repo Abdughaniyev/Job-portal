@@ -13,6 +13,8 @@ export const config: IConfig = {
     jwtAccessToken: process.env.JWT_ACCESS_TOKEN || '',
     jwtRefreshToken: process.env.JWT_REFRESH_TOKEN || '',
 
+    frontendURL: String(process.env.FRONTEND_URL) || 'http://localhost:5173' || 'https://frelanser-versel-eol5.vercel.app',
+
     // Google related part
     clientID: String(process.env.GOOGLE_CLIENT_ID) || '',
     clientSecret: String(process.env.GOOGLE_CLIENT_SECRET) || '',

@@ -15,4 +15,6 @@ export interface IConfig {
     smtpUser: string;
     smtpPassword: string;
     ipAddress: string;
+    frontendURL: string;
+
 }
