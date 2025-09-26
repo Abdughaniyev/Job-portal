@@ -2,8 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Injectable } from '@nestjs/common';
 import { config } from 'src/common/config/config';
-import * as dotenv from 'dotenv';
-dotenv.config();
+
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -13,7 +12,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
             clientID: config.clientID,
             clientSecret: config.clientSecret,
-            callbackURL: process.env.GOOGLE_CALLBACK_URL,
+            callbackURL: 'https://job-portal-production-294a.up.railway.app/api/v1/users/google/redirect',
             // callbackURL: config.callbackURL, // for local host
             scope: ['email', 'profile'],
         });
