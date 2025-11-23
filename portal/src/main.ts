@@ -17,13 +17,10 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:5173',
-      'https://job-portal-production-294a.up.railway.app',
-      'https://frelanser-versel-eol5.vercel.app'
+      'https://job-portal-production-b811.up.railway.app',
     ],
-    credentials: true // if you use cookies/tokens in headers
+    credentials: true,
   });
-
-
 
   app.useBodyParser('json');
   app.use(helmet());
@@ -52,7 +49,10 @@ async function bootstrap() {
     .setTitle('Job Portal API')
     .setDescription('API docs for the Job Portal')
     .setVersion('1.0.0')
-    .addServer('https://job-portal-production-294a.up.railway.app', 'Production')
+    .addServer(
+      'https://job-portal-production-b811.up.railway.app',
+      'Production',
+    )
     .addServer(`http://localhost:${config.port}`, 'Local')
     .addTag('APIs')
     .addBearerAuth(
@@ -76,7 +76,6 @@ async function bootstrap() {
   await app.listen(PORT, () => {
     console.log(`🚀 App running on port ${PORT}`);
     console.log(`📚 Swagger docs at /api-docs`);
-
   });
 }
 
