@@ -35,7 +35,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly passwordService: PasswordService,
-  ) { }
+  ) {}
 
   @Post('sign-up')
   signup(@Body() createUserDto: CreateUserDto) {
@@ -68,7 +68,6 @@ export class UsersController {
     return this.usersService.logout(userId, refreshTokenFromClient);
   }
 
-
   // PASSWORD RESET FLOW
 
   @Post('reset-password')
@@ -78,7 +77,10 @@ export class UsersController {
 
   @Post('verify-password')
   verifyCode(@Body() verifyDto: VerifyDto) {
-    return this.passwordService.verifyCode(verifyDto.email, verifyDto.resetPassword);
+    return this.passwordService.verifyCode(
+      verifyDto.email,
+      verifyDto.resetPassword,
+    );
   }
   @ApiBearerAuth('access-token')
   @UseGuards(JwtRefreshAuthGuard)
@@ -89,19 +91,17 @@ export class UsersController {
     return { accessToken: newAccessToken };
   }
 
-  // GOOGLE AUTH 
+  // GOOGLE AUTH
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
-  googleAuth() { }
-
+  googleAuth() {}
 
   // @Get('google/redirect')
   // @UseGuards(GoogleAuthGuard)
   // googleAuthRedirect(@Req() req) {
   //   return this.usersService.googleLogin(req.user);
   // }
-
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
@@ -110,15 +110,13 @@ export class UsersController {
 
     // Redirect to frontend with tokens
     return res.redirect(
-      `${process.env.FRONTEND_URL}/users/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`
+      `${process.env.BASE_URL}/users/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
     );
-//     return res.send(`
-//   Access Token: ${tokens.accessToken} <br/>
-//   Refresh Token: ${tokens.refreshToken}
-// `);
+    //     return res.send(`
+    //   Access Token: ${tokens.accessToken} <br/>
+    //   Refresh Token: ${tokens.refreshToken}
+    // `);
   }
-
-
 
   // ADMIN: GET ALL USERS
   @ApiBearerAuth('access-token')
@@ -129,7 +127,7 @@ export class UsersController {
     return this.usersService.findAll(pagination);
   }
 
-  // USER: GET OWN PROFILE 
+  // USER: GET OWN PROFILE
   @ApiBearerAuth('access-token')
   @Get(':id')
   @UseGuards(JwtAuthGuard)
@@ -146,7 +144,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  // ADMIN: DELETE USER 
+  // ADMIN: DELETE USER
   @ApiBearerAuth('access-token')
   @Delete(':id')
   @Roles('jobseeker')
