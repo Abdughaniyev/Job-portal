@@ -97,26 +97,27 @@ export class UsersController {
   @UseGuards(GoogleAuthGuard)
   googleAuth() {}
 
-  // @Get('google/redirect')
-  // @UseGuards(GoogleAuthGuard)
-  // googleAuthRedirect(@Req() req) {
-  //   return this.usersService.googleLogin(req.user);
-  // }
-
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  async googleAuthRedirect(@Req() req, @Res() res: Response) {
-    const tokens = await this.usersService.googleLogin(req.user);
-
-    // Redirect to frontend with tokens
-    return res.redirect(
-      `${process.env.BASE_URL}/users/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
-    );
-    //     return res.send(`
-    //   Access Token: ${tokens.accessToken} <br/>
-    //   Refresh Token: ${tokens.refreshToken}
-    // `);
+  googleAuthRedirect(@Req() req) {
+    return this.usersService.googleLogin(req.user);
   }
+
+  // @Get('google/redirect')
+  // @UseGuards(GoogleAuthGuard)
+  // async googleAuthRedirect(@Req() req, @Res() res: Response) {
+  //   const tokens = await this.usersService.googleLogin(req.user);
+
+  // Redirect to frontend with tokens
+  // return res.redirect(
+  //   `${process.env.BASE_URL}/users/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
+  // );
+
+  //     return res.send(`
+  //   Access Token: ${tokens.accessToken} <br/>
+  //   Refresh Token: ${tokens.refreshToken}
+  // `);
+  // }
 
   // ADMIN: GET ALL USERS
   @ApiBearerAuth('access-token')
